@@ -50,22 +50,30 @@ const packs = [
   },
   {
     name: "83+ x3 Players Pack",
-    cost: 400,
+    cost: 550,
     count: 3,
     filter: player => player.rating >= 83
   },
   {
     name: "Low Rated 10-Player Pack",
-    cost: 750,
+    cost: 600,
     count: 10,
     custom: "lowRated10"
   },
   {
     name: "Guaranteed Icon Pack",
-    cost: 1000,
+    cost: 700,
     count: 1,
     filter: player => player.version === "Icon"
+  },
+  {
+    name: "Promo Pack",
+    cost: 1500,
+    count: 1,
+    filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite"].includes(player.version)
   }
+    
+
 ];
 
 // === Rarity Classes ===
@@ -73,6 +81,7 @@ function getRarityClass(player) {
   if (player.version === "Fan Favourite") return "fan-favourite";
   if (player.version === "Icon") return "icon";
   if (player.version === "OTW") return "otw";
+  if (player.version === "Pre-Season Standouts") return "pre-season-standout"; // Sunset!
   if (player.rating >= 86) return "gold";
   if (player.rating >= 80) return "silver";
   return "bronze";
@@ -104,20 +113,16 @@ function createCardElement(player, showButtons = true) {
     const buttonsDiv = document.createElement("div");
     buttonsDiv.className = "card-buttons";
 
-   const sendBtn = document.createElement("button");
-sendBtn.textContent = "Send to Collection";
-sendBtn.onclick = () => {
-  collection.push(player);
-  saveToStorage();
-
-  // ✅ Remove the card after sending
-  card.remove();
-
-  // ✅ Update collection tab if open
-  if (document.getElementById("collection-screen").style.display !== "none") {
-    showCollection();
-  }
-};
+    const sendBtn = document.createElement("button");
+    sendBtn.textContent = "Send to Collection";
+    sendBtn.onclick = () => {
+      collection.push(player);
+      saveToStorage();
+      card.remove();
+      if (document.getElementById("collection-screen").style.display !== "none") {
+        showCollection();
+      }
+    };
 
     const sellBtn = document.createElement("button");
     sellBtn.textContent = `Sell (${player.sellValue})`;
@@ -125,7 +130,6 @@ sendBtn.onclick = () => {
       coins += player.sellValue;
       updateCoinsDisplay();
 
-      // Remove ONE instance from collection
       const index = findPlayerIndex(player);
       if (index !== -1) {
         collection.splice(index, 1);
@@ -153,7 +157,7 @@ function findPlayerIndex(player) {
     p.rating === player.rating &&
     p.version === player.version &&
     p.club === player.club &&
-    (p.image ? p.image === player.image : true)
+    (!p.image || !player.image || p.image === player.image)
   );
 }
 
@@ -172,7 +176,6 @@ function showCollection() {
   const collectionArea = document.getElementById("collection-area");
   collectionArea.innerHTML = "";
 
-  // Group by unique player key and count instances
   const playerMap = new Map();
   collection.forEach(player => {
     const key = `${player.name}-${player.rating}-${player.version}-${player.club}`;
@@ -189,7 +192,6 @@ function showCollection() {
   sortedEntries.forEach(([key, { player, count }]) => {
     const card = createCardElement(player, false);
 
-    // Show count
     const countBadge = document.createElement("div");
     countBadge.style.fontSize = "12px";
     countBadge.style.color = "#ccc";
@@ -197,11 +199,9 @@ function showCollection() {
     countBadge.textContent = `Owned: ${count}`;
     card.querySelector(".info").appendChild(countBadge);
 
-    // Buttons container
     const buttonsDiv = document.createElement("div");
     buttonsDiv.className = "card-buttons";
 
-    // Sell One
     const sellOneBtn = document.createElement("button");
     sellOneBtn.textContent = `Sell One (${player.sellValue})`;
     sellOneBtn.onclick = () => {
@@ -216,7 +216,6 @@ function showCollection() {
       }
     };
 
-    // Sell All
     const sellAllBtn = document.createElement("button");
     sellAllBtn.textContent = `Sell All (${player.sellValue * count})`;
     sellAllBtn.style.background = "#b71c1c";
@@ -225,7 +224,6 @@ function showCollection() {
       coins += totalValue;
       updateCoinsDisplay();
 
-      // Remove all instances
       for (let i = collection.length - 1; i >= 0; i--) {
         const p = collection[i];
         if (
@@ -233,7 +231,7 @@ function showCollection() {
           p.rating === player.rating &&
           p.version === player.version &&
           p.club === player.club &&
-          (p.image ? p.image === player.image : true)
+          (!p.image || !player.image || p.image === player.image)
         ) {
           collection.splice(i, 1);
         }
@@ -346,6 +344,8 @@ function openPack(pack) {
     // Confetti based on rarity
     if (newPlayers.some(p => p.version === "Fan Favourite")) {
       runMultiColorConfetti(["#8000ff", "#cc66ff", "#e0b3ff"], 150);
+    } else if (newPlayers.some(p => p.version === "Pre-Season Standouts")) {
+      runMultiColorConfetti(["#ff6b35", "#f7931e", "#fd5b71", "#c11a73"], 140); // Sunset colors
     } else if (newPlayers.some(p => p.version === "Icon")) {
       runMultiColorConfetti(["#FFD700", "#FFFFFF"], 120);
     } else if (newPlayers.some(p => p.version === "OTW")) {
@@ -357,9 +357,6 @@ function openPack(pack) {
     } else {
       runConfettiEffect("gray", 120);
     }
-
-    // ✅ DO NOT add to collection here anymore
-    // Players will be added only when "Send to Collection" is clicked
   });
 }
 
