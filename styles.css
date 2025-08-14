@@ -1,0 +1,355 @@
+/* === Global Styles === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #fff;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: gold;
+  margin-bottom: 20px;
+}
+
+/* === Coins Display === */
+.coins {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: gold;
+}
+
+/* === Buttons (General) === */
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  background-color: #222;
+  border: 1px solid #555;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background-color: #333;
+}
+
+/* === Navigation === */
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+nav button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  background: #1e1e1e;
+  border: 1px solid #333;
+}
+
+nav button:hover {
+  background-color: #333;
+}
+
+/* === Player Card Base === */
+.player-card {
+  width: 160px;
+  height: 280px;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  user-select: none;
+  margin: 0.5rem;
+  animation: pop-in 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* === Rarity Backgrounds === */
+.player-card.gold {
+  background: linear-gradient(135deg, #daba05d1, #a892088a);
+  box-shadow: 0 0 10px #ffd700;
+  color: #000;
+}
+
+.player-card.silver {
+  background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
+  box-shadow: 0 0 8px #c0c0c0;
+  color: #000;
+}
+
+.player-card.bronze {
+  background: linear-gradient(135deg, #cd7f32, #e6b17e);
+  box-shadow: 0 0 6px #cd7f32;
+  color: #000;
+}
+
+.player-card.icon {
+  background: linear-gradient(135deg, gold, white);
+  box-shadow: 0 0 12px gold;
+  color: #000;
+}
+
+.player-card.otw {
+  background: linear-gradient(135deg, #8e0000, #1a1a1a, #444);
+  box-shadow: 0 0 10px #ff2b2b;
+  color: #fff;
+}
+
+.player-card.fan-favourite {
+  background: linear-gradient(135deg, #6a0dad, #9b30ff);
+  box-shadow: 0 0 14px #9b30ff;
+  color: #fff;
+  position: relative;
+  animation: fan-fav-glow 3s ease-in-out infinite;
+}
+
+/* === Card Animations === */
+@keyframes pop-in {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fan-fav-glow {
+  0% { box-shadow: 0 0 10px #9b30ff, 0 0 20px #6a0dad; }
+  50% { box-shadow: 0 0 20px #9b30ff, 0 0 40px #6a0dad; }
+  100% { box-shadow: 0 0 10px #9b30ff, 0 0 20px #6a0dad; }
+}
+
+/* === Player Image === */
+.player-img-wrapper {
+  width: 100%;
+  height: 55%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.player-img-wrapper img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+  background-color: #000;
+}
+
+/* === Player Info === */
+.player-card .info {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.player-card .info h3 {
+  margin: 0 0 4px 0;
+  font-weight: bold;
+}
+
+.player-card .info p {
+  margin: 0;
+}
+
+/* === Card Buttons === */
+.player-card .card-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.player-card .card-buttons button {
+  width: 100%;
+  padding: 4px 0;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* === Pack Buttons === */
+#packs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#packs button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #1e1e1e;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 10px;
+}
+
+#packs button:hover {
+  background-color: #333;
+}
+
+/* === Pack & Collection Areas === */
+#pack-area,
+#collection-area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* === Pack Opening Overlay === */
+#pack-opening-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#pack-opening-overlay .overlay-content {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  letter-spacing: 4px;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+  }
+  50% {
+    color: #ffd700;
+    text-shadow: 0 0 20px #ffd700;
+  }
+  100% {
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
+  }
+}
+
+/* === Confetti === */
+.confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  opacity: 0.9;
+  pointer-events: none;
+  border-radius: 2px;
+  z-index: 9999;
+  animation: confetti-fall 3s linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* === Team Builder Styles === */
+#your-team-screen {
+  text-align: center;
+  padding: 1rem;
+}
+
+.lineup-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Team Slot: Position below card */
+.team-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 160px;
+  gap: 6px;
+}
+
+/* Position Label (e.g., GK, ST) */
+.position-label {
+  background-color: #1a73e8;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  width: 60px;
+  text-align: center;
+}
+
+/* Card Preview (same size as other cards) */
+.team-card-preview {
+  width: 160px;
+  height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.team-card-preview .player-card {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+
+.team-card-preview .player-img-wrapper img {
+  object-fit: cover;
+}
+
+/* Dropdown */
+.team-select {
+  width: 160px;
+  height: 36px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #222;
+  color: white;
+}
+
+.team-select option {
+  background: #111;
+  color: white;
+  font-size: 14px;
+}

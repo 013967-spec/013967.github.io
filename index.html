@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FC26 Pack Opener</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>FC26 Pack Opener</h1>
+
+    <!-- Coins Display -->
+    <div class="coins">
+      <span id="coin-display">Coins: <span id="coin-count">1500</span></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+      <button id="nav-open">Open Packs</button>
+      <button id="nav-collection">My Collection</button>
+      <button id="nav-team">Your Team</button>
+    </nav>
+
+    <!-- Screens -->
+    <div id="packs-screen">
+      <h2>Open Packs</h2>
+      <div id="packs"></div>
+      <div id="pack-area"></div>
+    </div>
+
+    <div id="collection-screen" style="display: none;">
+      <h2>My Collection</h2>
+      <div id="collection-area"></div>
+    </div>
+
+    <div id="your-team-screen" style="display: none;">
+      <h2>Your Best Team (4-3-3)</h2>
+      <div id="formation">
+      <div id="gk-line" class="lineup-row"></div>
+      <div id="defense-line" class="lineup-row"></div>
+      <div id="midfield-line" class="lineup-row"></div>
+      <div id="attack-line" class="lineup-row"></div>
+        </div>
+      <button onclick="saveTeam()">Save Team</button>
+    </div>
+  </div>
+
+  <!-- Pack Opening Overlay -->
+  <div id="pack-opening-overlay">
+    <div class="overlay-content">
+      <div class="shimmer-text">Opening Pack...</div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="players.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
