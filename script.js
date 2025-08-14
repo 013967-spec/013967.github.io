@@ -16,17 +16,14 @@ function saveToStorage() {
 function resetProgress() {
   const confirmed = confirm("Are you sure you want to reset ALL your progress? This cannot be undone.");
   if (confirmed) {
-    // Reset in-memory data
     coins = 1500;
     collection = [];
     yourTeam = [];
 
-    // Clear localStorage
     localStorage.removeItem("fc26Coins");
     localStorage.removeItem("fc26Collection");
     localStorage.removeItem("fc26Team");
 
-    // Update UI
     updateCoinsDisplay();
     document.getElementById("pack-area").innerHTML = "";
     showCollection();
@@ -41,8 +38,7 @@ function updateCoinsDisplay() {
 }
 
 // === Player Pool (from players.js) ===
-// This will be loaded via <script src="players.js"></script> in HTML
-// Assume `playerPool` is defined there
+// Assume `playerPool` is defined in players.js
 
 // === Pack Types ===
 const packs = [
@@ -112,7 +108,7 @@ function createCardElement(player, showButtons = true) {
     sendBtn.textContent = "Send to Collection";
     sendBtn.onclick = () => {
       collection.push(player);
-      saveToStorage(); // Save after adding
+      saveToStorage();
       card.remove();
     };
 
@@ -121,7 +117,17 @@ function createCardElement(player, showButtons = true) {
     sellBtn.onclick = () => {
       coins += player.sellValue;
       updateCoinsDisplay();
-      saveToStorage(); // Save updated coins
+
+      // Remove ONE instance from collection
+      const index = findPlayerIndex(player);
+      if (index !== -1) {
+        collection.splice(index, 1);
+        saveToStorage();
+        if (document.getElementById("collection-screen").style.display !== "none") {
+          showCollection();
+        }
+      }
+
       card.remove();
     };
 
@@ -131,6 +137,17 @@ function createCardElement(player, showButtons = true) {
   }
 
   return card;
+}
+
+// === Helper: Find index of a player in collection ===
+function findPlayerIndex(player) {
+  return collection.findIndex(p =>
+    p.name === player.name &&
+    p.rating === player.rating &&
+    p.version === player.version &&
+    p.club === player.club &&
+    (p.image ? p.image === player.image : true)
+  );
 }
 
 // === Display Players from Pack ===
@@ -148,26 +165,81 @@ function showCollection() {
   const collectionArea = document.getElementById("collection-area");
   collectionArea.innerHTML = "";
 
-  const uniquePlayers = [...new Map(collection.map(p => [p.name + p.version + p.rating, p])).values()]
-    .sort((a, b) => b.rating - a.rating);
+  // Group by unique player key and count instances
+  const playerMap = new Map();
+  collection.forEach(player => {
+    const key = `${player.name}-${player.rating}-${player.version}-${player.club}`;
+    if (!playerMap.has(key)) {
+      playerMap.set(key, { player: { ...player }, count: 0 });
+    }
+    playerMap.get(key).count++;
+  });
 
-  uniquePlayers.forEach(player => {
+  const sortedEntries = [...playerMap.entries()].sort((a, b) => {
+    return b[1].player.rating - a[1].player.rating;
+  });
+
+  sortedEntries.forEach(([key, { player, count }]) => {
     const card = createCardElement(player, false);
 
-    const sellButton = document.createElement("button");
-    sellButton.textContent = `Sell (${player.sellValue})`;
-    sellButton.onclick = () => {
+    // Show count
+    const countBadge = document.createElement("div");
+    countBadge.style.fontSize = "12px";
+    countBadge.style.color = "#ccc";
+    countBadge.style.marginTop = "4px";
+    countBadge.textContent = `Owned: ${count}`;
+    card.querySelector(".info").appendChild(countBadge);
+
+    // Buttons container
+    const buttonsDiv = document.createElement("div");
+    buttonsDiv.className = "card-buttons";
+
+    // Sell One
+    const sellOneBtn = document.createElement("button");
+    sellOneBtn.textContent = `Sell One (${player.sellValue})`;
+    sellOneBtn.onclick = () => {
       coins += player.sellValue;
       updateCoinsDisplay();
-      const index = collection.findIndex(p =>
-        p.name === player.name && p.version === player.version && p.rating === player.rating
-      );
-      if (index !== -1) collection.splice(index, 1);
-      saveToStorage(); // Save after selling
-      showCollection();
+
+      const index = findPlayerIndex(player);
+      if (index !== -1) {
+        collection.splice(index, 1);
+        saveToStorage();
+        showCollection();
+      }
     };
 
-    card.appendChild(sellButton);
+    // Sell All
+    const sellAllBtn = document.createElement("button");
+    sellAllBtn.textContent = `Sell All (${player.sellValue * count})`;
+    sellAllBtn.style.background = "#b71c1c";
+    sellAllBtn.onclick = () => {
+      const totalValue = player.sellValue * count;
+      coins += totalValue;
+      updateCoinsDisplay();
+
+      // Remove all instances
+      for (let i = collection.length - 1; i >= 0; i--) {
+        const p = collection[i];
+        if (
+          p.name === player.name &&
+          p.rating === player.rating &&
+          p.version === player.version &&
+          p.club === player.club &&
+          (p.image ? p.image === player.image : true)
+        ) {
+          collection.splice(i, 1);
+        }
+      }
+
+      saveToStorage();
+      showCollection();
+      alert(`Sold ${count} × ${player.name} for ${totalValue} coins!`);
+    };
+
+    buttonsDiv.appendChild(sellOneBtn);
+    buttonsDiv.appendChild(sellAllBtn);
+    card.appendChild(buttonsDiv);
     collectionArea.appendChild(card);
   });
 }
@@ -279,9 +351,9 @@ function openPack(pack) {
       runConfettiEffect("gray", 120);
     }
 
-    // Save new players to collection
+    // Add new players to collection
     newPlayers.forEach(p => collection.push(p));
-    saveToStorage(); // Save coins + collection
+    saveToStorage();
   });
 }
 
@@ -415,7 +487,7 @@ function saveTeam() {
     }
   });
 
-  saveToStorage(); // Save the team
+  saveToStorage();
 
   const totalValue = yourTeam.reduce((sum, player) => sum + (player.sellValue || 0), 0);
   const totalRating = yourTeam.reduce((sum, player) => sum + player.rating, 0);
@@ -451,11 +523,9 @@ document.getElementById("nav-team").onclick = () => {
 setupPackButtons();
 updateCoinsDisplay();
 
-// === Add Reset Button Dynamically (or you can add it in HTML) ===
-// Let's add it to the coins bar for visibility
+// === Add Reset Button ===
 document.querySelector(".coins").insertAdjacentHTML(
   "beforeend",
   ` <button id="reset-progress-btn" style="font-size: 14px; background: #8B0000; margin-left: 10px;">Reset Progress</button>`
 );
-
 document.getElementById("reset-progress-btn").onclick = resetProgress;
