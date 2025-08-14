@@ -104,13 +104,20 @@ function createCardElement(player, showButtons = true) {
     const buttonsDiv = document.createElement("div");
     buttonsDiv.className = "card-buttons";
 
-    const sendBtn = document.createElement("button");
-    sendBtn.textContent = "Send to Collection";
-    sendBtn.onclick = () => {
-      collection.push(player);
-      saveToStorage();
-      card.remove();
-    };
+   const sendBtn = document.createElement("button");
+sendBtn.textContent = "Send to Collection";
+sendBtn.onclick = () => {
+  collection.push(player);
+  saveToStorage();
+
+  // ✅ Remove the card after sending
+  card.remove();
+
+  // ✅ Update collection tab if open
+  if (document.getElementById("collection-screen").style.display !== "none") {
+    showCollection();
+  }
+};
 
     const sellBtn = document.createElement("button");
     sellBtn.textContent = `Sell (${player.sellValue})`;
@@ -351,9 +358,8 @@ function openPack(pack) {
       runConfettiEffect("gray", 120);
     }
 
-    // Add new players to collection
-    newPlayers.forEach(p => collection.push(p));
-    saveToStorage();
+    // ✅ DO NOT add to collection here anymore
+    // Players will be added only when "Send to Collection" is clicked
   });
 }
 
