@@ -146,7 +146,7 @@ const playerPool = [
   { name: "Scott McTominay", rating: 88, version: "Fan Favourite", club: "Napoli", image: "https://icdn.football-italia.net/wp-content/uploads/2024/09/Scott-McTominay-Napoli-celebrate-900x600.jpg", sellValue: 250 },
   { name: "Khvicha Kvaratskhelia", rating: 87, version: "Fan Favourite", club: "PSG", image: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Kvaratskhelia_asse_psg_2425.png", sellValue: 240 },
   { name: "N'Golo Kanté", rating: 90, version: "Fan Favourite", club: "Al Ittihad", image: "https://assets.goal.com/images/v3/blt23c771c7cc372ed8/GettyImages-1680676912.jpg", sellValue: 270 },
-
+  { name: "Diogo Jota", rating: 92, version: "Fan Favourite", club: "Icons", image: "https://assets.goal.com/images/v3/blt8c7a7761bf185a99/GOAL%20-%20Blank%20WEB%20-%20Facebook(2825)-modified.jpeg?auto=webp&format=pjpg&width=3840&quality=60", sellValue: 280 },
 
 
 
