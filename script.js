@@ -1,7 +1,50 @@
-let coins = 1500;
-let collection = [];
-let yourTeam = [];
+// script.js
 
+// === Load saved data from localStorage or initialize defaults ===
+let coins = parseInt(localStorage.getItem("fc26Coins")) || 1500;
+let collection = JSON.parse(localStorage.getItem("fc26Collection")) || [];
+let yourTeam = JSON.parse(localStorage.getItem("fc26Team")) || [];
+
+// === Save Functions ===
+function saveToStorage() {
+  localStorage.setItem("fc26Coins", coins.toString());
+  localStorage.setItem("fc26Collection", JSON.stringify(collection));
+  localStorage.setItem("fc26Team", JSON.stringify(yourTeam));
+}
+
+// === Reset All Data ===
+function resetProgress() {
+  const confirmed = confirm("Are you sure you want to reset ALL your progress? This cannot be undone.");
+  if (confirmed) {
+    // Reset in-memory data
+    coins = 1500;
+    collection = [];
+    yourTeam = [];
+
+    // Clear localStorage
+    localStorage.removeItem("fc26Coins");
+    localStorage.removeItem("fc26Collection");
+    localStorage.removeItem("fc26Team");
+
+    // Update UI
+    updateCoinsDisplay();
+    document.getElementById("pack-area").innerHTML = "";
+    showCollection();
+    showTeamSelector();
+    alert("Your progress has been reset!");
+  }
+}
+
+// === Update Coins Display ===
+function updateCoinsDisplay() {
+  document.getElementById("coin-count").textContent = coins;
+}
+
+// === Player Pool (from players.js) ===
+// This will be loaded via <script src="players.js"></script> in HTML
+// Assume `playerPool` is defined there
+
+// === Pack Types ===
 const packs = [
   {
     name: "85+ Player Pack",
@@ -29,10 +72,7 @@ const packs = [
   }
 ];
 
-function updateCoinsDisplay() {
-  document.getElementById("coin-count").textContent = coins;
-}
-
+// === Rarity Classes ===
 function getRarityClass(player) {
   if (player.version === "Fan Favourite") return "fan-favourite";
   if (player.version === "Icon") return "icon";
@@ -42,12 +82,12 @@ function getRarityClass(player) {
   return "bronze";
 }
 
+// === Create Player Card ===
 function createCardElement(player, showButtons = true) {
   const card = document.createElement("div");
   const rarity = getRarityClass(player);
   card.className = `player-card ${rarity}`;
 
-  // Ensure consistent card size across all views
   card.style.width = "160px";
   card.style.height = "280px";
   card.style.overflow = "hidden";
@@ -72,6 +112,7 @@ function createCardElement(player, showButtons = true) {
     sendBtn.textContent = "Send to Collection";
     sendBtn.onclick = () => {
       collection.push(player);
+      saveToStorage(); // Save after adding
       card.remove();
     };
 
@@ -80,6 +121,7 @@ function createCardElement(player, showButtons = true) {
     sellBtn.onclick = () => {
       coins += player.sellValue;
       updateCoinsDisplay();
+      saveToStorage(); // Save updated coins
       card.remove();
     };
 
@@ -91,6 +133,7 @@ function createCardElement(player, showButtons = true) {
   return card;
 }
 
+// === Display Players from Pack ===
 function displayPackedPlayers(players) {
   const packArea = document.getElementById("pack-area");
   packArea.innerHTML = "";
@@ -100,6 +143,7 @@ function displayPackedPlayers(players) {
   });
 }
 
+// === Show Collection ===
 function showCollection() {
   const collectionArea = document.getElementById("collection-area");
   collectionArea.innerHTML = "";
@@ -119,6 +163,7 @@ function showCollection() {
         p.name === player.name && p.version === player.version && p.rating === player.rating
       );
       if (index !== -1) collection.splice(index, 1);
+      saveToStorage(); // Save after selling
       showCollection();
     };
 
@@ -127,6 +172,7 @@ function showCollection() {
   });
 }
 
+// === Special Pack: Low Rated 10-Pack ===
 function getRandomPlayerForLowRatedPack() {
   const rand = Math.random();
   if (rand <= 0.001) {
@@ -144,6 +190,7 @@ function getRandomPlayerForLowRatedPack() {
   }
 }
 
+// === Confetti Effects ===
 function createConfetti(color) {
   const confetti = document.createElement("div");
   confetti.classList.add("confetti");
@@ -176,6 +223,7 @@ function runMultiColorConfetti(colors, count = 100) {
   }
 }
 
+// === Pack Opening Overlay ===
 const overlay = document.createElement("div");
 overlay.id = "pack-opening-overlay";
 overlay.innerHTML = `
@@ -193,6 +241,7 @@ function showPackOpeningAnimation(callback) {
   }, 1500);
 }
 
+// === Open Pack Logic ===
 function openPack(pack) {
   if (coins < pack.cost) return alert("Not enough coins!");
   coins -= pack.cost;
@@ -215,6 +264,7 @@ function openPack(pack) {
 
     displayPackedPlayers(newPlayers);
 
+    // Confetti based on rarity
     if (newPlayers.some(p => p.version === "Fan Favourite")) {
       runMultiColorConfetti(["#8000ff", "#cc66ff", "#e0b3ff"], 150);
     } else if (newPlayers.some(p => p.version === "Icon")) {
@@ -228,9 +278,14 @@ function openPack(pack) {
     } else {
       runConfettiEffect("gray", 120);
     }
+
+    // Save new players to collection
+    newPlayers.forEach(p => collection.push(p));
+    saveToStorage(); // Save coins + collection
   });
 }
 
+// === Setup Pack Buttons ===
 function setupPackButtons() {
   const packsArea = document.getElementById("packs");
   packsArea.innerHTML = "";
@@ -242,8 +297,7 @@ function setupPackButtons() {
   });
 }
 
-// === TEAM BUILDER: IMPROVED VERSION ===
-
+// === TEAM BUILDER ===
 function showTeamSelector() {
   const gkLine = document.getElementById("gk-line");
   const defenseLine = document.getElementById("defense-line");
@@ -265,36 +319,30 @@ function showTeamSelector() {
       const slotWrapper = document.createElement("div");
       slotWrapper.className = "team-slot";
 
-      // Card Preview container
       const cardPreview = document.createElement("div");
       cardPreview.className = "team-card-preview";
       slotWrapper.appendChild(cardPreview);
 
-      // Position Label (e.g., "ST") — now below the card
       const posLabel = document.createElement("div");
       posLabel.className = "position-label";
       posLabel.textContent = pos;
       slotWrapper.appendChild(posLabel);
 
-      // Dropdown
       const select = document.createElement("select");
       select.className = "team-select";
       select.dataset.index = dropdownIndex;
       select.dataset.position = pos;
 
-      // Default option
       const defaultOption = document.createElement("option");
       defaultOption.value = "";
       defaultOption.textContent = `Select ${pos}`;
       defaultOption.selected = true;
       select.appendChild(defaultOption);
 
-      // Populate only when clicked
       select.onfocus = () => {
         populateDropdownOptions(select);
       };
 
-      // Update preview on change
       select.onchange = () => {
         updateTeamDropdownOptions();
       };
@@ -306,7 +354,6 @@ function showTeamSelector() {
     });
   });
 
-  // Initial preview update
   updateTeamDropdownOptions();
 }
 
@@ -368,6 +415,8 @@ function saveTeam() {
     }
   });
 
+  saveToStorage(); // Save the team
+
   const totalValue = yourTeam.reduce((sum, player) => sum + (player.sellValue || 0), 0);
   const totalRating = yourTeam.reduce((sum, player) => sum + player.rating, 0);
   const averageRating = yourTeam.length > 0 ? Math.round(totalRating / yourTeam.length) : 0;
@@ -375,10 +424,6 @@ function saveTeam() {
   alert(
     `Team saved!\nAverage Rating: ${averageRating}\nTotal Market Value: ${totalValue.toLocaleString()} coins`
   );
-}
-
-function getTeamRating() {
-  return yourTeam.reduce((sum, p) => sum + p.rating, 0);
 }
 
 // === NAVIGATION ===
@@ -405,3 +450,12 @@ document.getElementById("nav-team").onclick = () => {
 // === INIT ===
 setupPackButtons();
 updateCoinsDisplay();
+
+// === Add Reset Button Dynamically (or you can add it in HTML) ===
+// Let's add it to the coins bar for visibility
+document.querySelector(".coins").insertAdjacentHTML(
+  "beforeend",
+  ` <button id="reset-progress-btn" style="font-size: 14px; background: #8B0000; margin-left: 10px;">Reset Progress</button>`
+);
+
+document.getElementById("reset-progress-btn").onclick = resetProgress;
