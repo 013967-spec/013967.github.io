@@ -1,9 +1,13 @@
-// script.js
-
 // === Load saved data from localStorage or initialize defaults ===
 let coins = parseInt(localStorage.getItem("fc26Coins")) || 1500;
 let collection = JSON.parse(localStorage.getItem("fc26Collection")) || [];
 let yourTeam = JSON.parse(localStorage.getItem("fc26Team")) || [];
+
+// === Migrate existing collection: add __id if missing ===
+collection = collection.map(p => ({
+  ...p,
+  __id: p.__id || Date.now() + Math.random() * 10000
+}));
 
 // === Save Functions ===
 function saveToStorage() {
@@ -72,8 +76,6 @@ const packs = [
     count: 1,
     filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite"].includes(player.version)
   }
-    
-
 ];
 
 // === Rarity Classes ===
@@ -81,7 +83,7 @@ function getRarityClass(player) {
   if (player.version === "Fan Favourite") return "fan-favourite";
   if (player.version === "Icon") return "icon";
   if (player.version === "OTW") return "otw";
-  if (player.version === "Pre-Season Standouts") return "pre-season-standout"; // Sunset!
+  if (player.version === "Pre-Season Standouts") return "pre-season-standout";
   if (player.rating >= 86) return "gold";
   if (player.rating >= 80) return "silver";
   return "bronze";
@@ -116,7 +118,12 @@ function createCardElement(player, showButtons = true) {
     const sendBtn = document.createElement("button");
     sendBtn.textContent = "Send to Collection";
     sendBtn.onclick = () => {
-      collection.push(player);
+      // Ensure this card has a unique ID
+      const playerWithId = {
+        ...player,
+        __id: player.__id || Date.now() + Math.random() * 10000
+      };
+      collection.push(playerWithId);
       saveToStorage();
       card.remove();
       if (document.getElementById("collection-screen").style.display !== "none") {
@@ -130,7 +137,7 @@ function createCardElement(player, showButtons = true) {
       coins += player.sellValue;
       updateCoinsDisplay();
 
-      const index = findPlayerIndex(player);
+      const index = collection.findIndex(p => p.__id === player.__id);
       if (index !== -1) {
         collection.splice(index, 1);
         saveToStorage();
@@ -150,23 +157,23 @@ function createCardElement(player, showButtons = true) {
   return card;
 }
 
-// === Helper: Find index of a player in collection ===
+// === Helper: Find index of a player in collection by __id ===
 function findPlayerIndex(player) {
-  return collection.findIndex(p =>
-    p.name === player.name &&
-    p.rating === player.rating &&
-    p.version === player.version &&
-    p.club === player.club &&
-    (!p.image || !player.image || p.image === player.image)
-  );
+  return collection.findIndex(p => p.__id === player.__id);
 }
 
 // === Display Players from Pack ===
 function displayPackedPlayers(players) {
   const packArea = document.getElementById("pack-area");
   packArea.innerHTML = "";
+
   players.forEach(player => {
-    const card = createCardElement(player);
+    // Assign a unique ID to each pulled card
+    const playerWithId = {
+      ...player,
+      __id: Date.now() + Math.random() * 10000
+    };
+    const card = createCardElement(playerWithId);
     packArea.appendChild(card);
   });
 }
@@ -176,15 +183,17 @@ function showCollection() {
   const collectionArea = document.getElementById("collection-area");
   collectionArea.innerHTML = "";
 
+  // Group by visual identity (excluding __id)
   const playerMap = new Map();
   collection.forEach(player => {
-    const key = `${player.name}-${player.rating}-${player.version}-${player.club}`;
+    const key = `${player.name}-${player.rating}-${player.version}-${player.club}-${player.image}`;
     if (!playerMap.has(key)) {
       playerMap.set(key, { player: { ...player }, count: 0 });
     }
     playerMap.get(key).count++;
   });
 
+  // Sort by rating (highest first)
   const sortedEntries = [...playerMap.entries()].sort((a, b) => {
     return b[1].player.rating - a[1].player.rating;
   });
@@ -192,13 +201,25 @@ function showCollection() {
   sortedEntries.forEach(([key, { player, count }]) => {
     const card = createCardElement(player, false);
 
+    // Add count badge
     const countBadge = document.createElement("div");
     countBadge.style.fontSize = "12px";
-    countBadge.style.color = "#ccc";
+    countBadge.style.color = "white";                   // Bright white text
+    countBadge.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Dark semi-transparent bg
+    countBadge.style.padding = "3px 6px";
+    countBadge.style.borderRadius = "4px";
+    countBadge.style.display = "inline-block";
     countBadge.style.marginTop = "4px";
-    countBadge.textContent = `Owned: ${count}`;
-    card.querySelector(".info").appendChild(countBadge);
+    countBadge.style.fontWeight = "bold";
+    countBadge.style.textAlign = "center";
+    countBadge.style.boxShadow = "0 1px 2px rgba(0,0,0,0.3)";
+    countBadge.style.width = "100%";
+    countBadge.style.transform = "scale(0.95)"; // Slight shrink to fit
 
+countBadge.textContent = `Owned: ${count}`;
+card.querySelector(".info").appendChild(countBadge);
+
+    // Add buttons
     const buttonsDiv = document.createElement("div");
     buttonsDiv.className = "card-buttons";
 
@@ -208,7 +229,7 @@ function showCollection() {
       coins += player.sellValue;
       updateCoinsDisplay();
 
-      const index = findPlayerIndex(player);
+      const index = collection.findIndex(p => p.__id === player.__id);
       if (index !== -1) {
         collection.splice(index, 1);
         saveToStorage();
@@ -224,15 +245,12 @@ function showCollection() {
       coins += totalValue;
       updateCoinsDisplay();
 
+      // Remove all visually identical cards
+      const matchKey = `${player.name}-${player.rating}-${player.version}-${player.club}-${player.image}`;
       for (let i = collection.length - 1; i >= 0; i--) {
         const p = collection[i];
-        if (
-          p.name === player.name &&
-          p.rating === player.rating &&
-          p.version === player.version &&
-          p.club === player.club &&
-          (!p.image || !player.image || p.image === player.image)
-        ) {
+        const pKey = `${p.name}-${p.rating}-${p.version}-${p.club}-${p.image}`;
+        if (pKey === matchKey) {
           collection.splice(i, 1);
         }
       }
@@ -345,7 +363,7 @@ function openPack(pack) {
     if (newPlayers.some(p => p.version === "Fan Favourite")) {
       runMultiColorConfetti(["#8000ff", "#cc66ff", "#e0b3ff"], 150);
     } else if (newPlayers.some(p => p.version === "Pre-Season Standouts")) {
-      runMultiColorConfetti(["#ff6b35", "#f7931e", "#fd5b71", "#c11a73"], 140); // Sunset colors
+      runMultiColorConfetti(["#ff6b35", "#f7931e", "#fd5b71", "#c11a73"], 140);
     } else if (newPlayers.some(p => p.version === "Icon")) {
       runMultiColorConfetti(["#FFD700", "#FFFFFF"], 120);
     } else if (newPlayers.some(p => p.version === "OTW")) {
@@ -441,7 +459,13 @@ function populateDropdownOptions(select) {
   defaultOption.selected = true;
   select.appendChild(defaultOption);
 
-  const uniquePlayers = [...new Map(collection.map(p => [p.name + p.version + p.rating, p])).values()];
+  // Deduplicate by visual identity
+  const uniquePlayers = [...new Map(
+    collection.map(p => [
+      `${p.name}-${p.rating}-${p.version}-${p.club}-${p.image}`,
+      p
+    ])
+  ).values()];
 
   const selectedPlayers = Array.from(document.querySelectorAll(".team-select"))
     .map(s => s.value)
@@ -454,8 +478,10 @@ function populateDropdownOptions(select) {
     const alreadySelected = selectedPlayers.some((p, i) =>
       i !== currentIndex &&
       p.name === player.name &&
+      p.rating === player.rating &&
       p.version === player.version &&
-      p.rating === player.rating
+      p.club === player.club &&
+      p.image === player.image
     );
 
     if (!alreadySelected) {
