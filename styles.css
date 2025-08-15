@@ -9,6 +9,7 @@ body {
   font-family: Arial, sans-serif;
   background: #111;
   color: #fff;
+  min-height: 100vh;
 }
 
 .container {
@@ -21,6 +22,8 @@ h1 {
   text-align: center;
   color: gold;
   margin-bottom: 20px;
+  font-size: 2.5rem;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 }
 
 /* === Coins Display === */
@@ -29,6 +32,12 @@ h1 {
   margin-bottom: 20px;
   font-size: 20px;
   color: gold;
+  font-weight: bold;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 /* === Buttons (General) === */
@@ -41,11 +50,16 @@ button {
   cursor: pointer;
   font-size: 14px;
   border-radius: 6px;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
   background-color: #333;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 /* === Navigation === */
@@ -63,10 +77,12 @@ nav button {
   border-radius: 8px;
   background: #1e1e1e;
   border: 1px solid #333;
+  min-width: 120px;
 }
 
 nav button:hover {
   background-color: #333;
+  color: gold;
 }
 
 /* === Player Card Base === */
@@ -83,45 +99,123 @@ nav button:hover {
   margin: 0.5rem;
   animation: pop-in 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  position: relative;
+  color: #000; /* Default text color */
 }
 
 /* === Rarity Backgrounds === */
+
+/* Gold (86+) */
 .player-card.gold {
   background: linear-gradient(135deg, #daba05d1, #a892088a);
   box-shadow: 0 0 10px #ffd700;
   color: #000;
 }
 
+/* Silver (80-85) */
 .player-card.silver {
   background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
   box-shadow: 0 0 8px #c0c0c0;
   color: #000;
 }
 
+/* Bronze */
 .player-card.bronze {
   background: linear-gradient(135deg, #cd7f32, #e6b17e);
   box-shadow: 0 0 6px #cd7f32;
   color: #000;
 }
 
+/* Icon */
 .player-card.icon {
   background: linear-gradient(135deg, gold, white);
   box-shadow: 0 0 12px gold;
   color: #000;
 }
 
+/* OTW */
 .player-card.otw {
   background: linear-gradient(135deg, #8e0000, #1a1a1a, #444);
   box-shadow: 0 0 10px #ff2b2b;
   color: #fff;
 }
 
+/* Fan Favourite - Premium Holographic Pattern Background */
 .player-card.fan-favourite {
   background: linear-gradient(135deg, #6a0dad, #9b30ff);
   box-shadow: 0 0 14px #9b30ff;
   color: #fff;
   position: relative;
+  overflow: hidden;
   animation: fan-fav-glow 3s ease-in-out infinite;
+}
+
+/* Holographic Criss-Cross Foil Pattern */
+.player-card.fan-favourite::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.06) 10px,
+      rgba(255, 255, 255, 0.12) 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 15px,
+      rgba(150, 100, 255, 0.08) 15px,
+      rgba(150, 100, 255, 0.16) 30px
+    );
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
+  animation: move-holographic 8s linear infinite;
+  transform: rotate(15deg);
+}
+
+/* Subtle Noise Texture for Depth (like real card stock) */
+.player-card.fan-favourite::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.1 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Animation: Slowly shift the holographic lines */
+@keyframes move-holographic {
+  0% {
+    transform: rotate(15deg) translateX(0) translateY(0);
+  }
+  100% {
+    transform: rotate(15deg) translateX(15px) translateY(15px);
+  }
+}
+
+/* Glow Pulse Animation */
+@keyframes fan-fav-glow {
+  0% { box-shadow: 0 0 10px #9b30ff, 0 0 20px #6a0dad; }
+  50% { box-shadow: 0 0 20px #9b30ff, 0 0 40px #6a0dad; }
+  100% { box-shadow: 0 0 10px #9b30ff, 0 0 20px #6a0dad; }
+}
+
+/* Pre-Season Standouts - Sunset Gradient */
+.player-card.pre-season-standout {
+  background: linear-gradient(135deg, #ff6b35, #f7931e, #fd5b71, #c11a73);
+  box-shadow: 0 0 12px #fd5b71, 0 0 20px rgba(253, 91, 113, 0.6);
+  color: white;
+  position: relative;
+  animation: sunset-glow 2.5s ease-in-out infinite alternate;
 }
 
 /* === Card Animations === */
@@ -130,10 +224,13 @@ nav button:hover {
   100% { transform: scale(1); opacity: 1; }
 }
 
-@keyframes fan-fav-glow {
-  0% { box-shadow: 0 0 10px #9b30ff, 0 0 20px #6a0dad; }
-  50% { box-shadow: 0 0 20px #9b30ff, 0 0 40px #6a0dad; }
-  100% { box-shadow: 0 0 10px #9b30ff, 0 0 20px #6a0dad; }
+@keyframes sunset-glow {
+  0% {
+    box-shadow: 0 0 10px #f7931e, 0 0 15px rgba(247, 147, 30, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 20px #fd5b71, 0 0 30px rgba(193, 26, 115, 0.8);
+  }
 }
 
 /* === Player Image === */
@@ -145,6 +242,8 @@ nav button:hover {
   align-items: center;
   overflow: hidden;
   margin-bottom: 8px;
+  border-radius: 6px;
+  background-color: #000;
 }
 
 .player-img-wrapper img {
@@ -152,7 +251,6 @@ nav button:hover {
   max-width: 100%;
   object-fit: contain;
   border-radius: 6px;
-  background-color: #000;
 }
 
 /* === Player Info === */
@@ -165,15 +263,18 @@ nav button:hover {
   flex-direction: column;
   justify-content: center;
   gap: 2px;
+  padding: 4px 0;
 }
 
 .player-card .info h3 {
   margin: 0 0 4px 0;
   font-weight: bold;
+  font-size: 15px;
 }
 
 .player-card .info p {
   margin: 0;
+  font-size: 12px;
 }
 
 /* === Card Buttons === */
@@ -190,6 +291,13 @@ nav button:hover {
   padding: 4px 0;
   font-size: 12px;
   border-radius: 6px;
+  background: #111;
+  color: white;
+  border: 1px solid #444;
+}
+
+.player-card .card-buttons button:hover {
+  background: #333;
 }
 
 /* === Pack Buttons === */
@@ -208,10 +316,12 @@ nav button:hover {
   color: white;
   border: 1px solid #444;
   border-radius: 10px;
+  min-width: 180px;
 }
 
 #packs button:hover {
   background-color: #333;
+  color: gold;
 }
 
 /* === Pack & Collection Areas === */
@@ -222,6 +332,7 @@ nav button:hover {
   justify-content: center;
   gap: 1rem;
   margin-top: 1rem;
+  min-height: 60px;
 }
 
 /* === Pack Opening Overlay === */
@@ -244,6 +355,7 @@ nav button:hover {
   font-weight: bold;
   letter-spacing: 4px;
   animation: shimmer 2s linear infinite;
+  text-align: center;
 }
 
 @keyframes shimmer {
@@ -276,7 +388,7 @@ nav button:hover {
 }
 
 @keyframes confetti-fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
@@ -291,9 +403,10 @@ nav button:hover {
   justify-content: center;
   gap: 2rem;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
-/* Team Slot: Position below card */
+/* Team Slot */
 .team-slot {
   display: flex;
   flex-direction: column;
@@ -312,9 +425,10 @@ nav button:hover {
   font-size: 14px;
   width: 60px;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Card Preview (same size as other cards) */
+/* Card Preview */
 .team-card-preview {
   width: 160px;
   height: 280px;
@@ -333,7 +447,7 @@ nav button:hover {
 }
 
 .team-card-preview .player-img-wrapper img {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 /* Dropdown */
@@ -346,10 +460,15 @@ nav button:hover {
   border-radius: 6px;
   background: #222;
   color: white;
+  cursor: pointer;
 }
 
 .team-select option {
   background: #111;
   color: white;
   font-size: 14px;
+}
+
+.team-select:hover {
+  border-color: #888;
 }
