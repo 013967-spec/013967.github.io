@@ -157,6 +157,7 @@ const playerPool = [
   { name: "Ollie Watkins", rating: 90, version: "Pre-Season Standouts", club: "Aston Villa", image: "https://cdn.images.express.co.uk/img/dynamic/67/590x/secondary/6317420.jpg?r=1753379730572", sellValue: 270 },
   { name: "Gianluigi Buffon", rating: 91, version: "Icon", club: "Icons", image: "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/A34A/production/_130620814_gettyimages-524822462.jpg", sellValue: 264, },
   { name: "Iker Casillas", rating: 91, version: "Icon", club: "Icons", image: "https://assets.goal.com/images/v3/blt47cbc303c7248673/04b77279c900eb6ea735f69d0c10beb2e4dc09d7.jpg?auto=webp&format=pjpg&width=3840&quality=60", sellValue: 262, },
+  { name: "Cafu", rating: 91, version: "Icon", club: "Icons", image: "https://dotorg.brightspotcdn.com/23/49/e3417fbd4645a06f239ce85d53f6/400x400-marcos-evangelista-de-morais.jpg", sellValue: 278, },
 
 
 
