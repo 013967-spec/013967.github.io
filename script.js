@@ -47,10 +47,10 @@ function updateCoinsDisplay() {
 // === Pack Types ===
 const packs = [
   {
-    name: "85+ Player Pack",
+    name: "86+ Player Pack",
     cost: 150,
     count: 1,
-    filter: player => player.rating >= 85
+    filter: player => player.rating >= 86
   },
   {
     name: "83+ x3 Players Pack",
