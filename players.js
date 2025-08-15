@@ -158,6 +158,8 @@ const playerPool = [
   { name: "Gianluigi Buffon", rating: 91, version: "Icon", club: "Icons", image: "https://ichef.bbci.co.uk/ace/standard/1024/cpsprodpb/A34A/production/_130620814_gettyimages-524822462.jpg", sellValue: 264, },
   { name: "Iker Casillas", rating: 91, version: "Icon", club: "Icons", image: "https://assets.goal.com/images/v3/blt47cbc303c7248673/04b77279c900eb6ea735f69d0c10beb2e4dc09d7.jpg?auto=webp&format=pjpg&width=3840&quality=60", sellValue: 262, },
   { name: "Cafu", rating: 91, version: "Icon", club: "Icons", image: "https://dotorg.brightspotcdn.com/23/49/e3417fbd4645a06f239ce85d53f6/400x400-marcos-evangelista-de-morais.jpg", sellValue: 278, },
+  { name: "Antony", rating: 89, version: "Fan Favourite", club: "Manchester United", image: "https://i.pinimg.com/736x/22/4a/b5/224ab5507633d1a4e835fc7532d64ba4.jpg", sellValue: 285 },
+  { name: "Matz Sels", rating: 88, version: "Pre-Season Standouts", club: "Nottm Forest", image: "https://ichef.bbci.co.uk/ace/standard/820/cpsprodpb/7fe4/live/35c8e0d0-da2f-11ef-95b0-9ba717ab19ce.jpg", sellValue: 250 },
 
 
 
