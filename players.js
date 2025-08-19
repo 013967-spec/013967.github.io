@@ -160,6 +160,7 @@ const playerPool = [
   { name: "Cafu", rating: 91, version: "Icon", club: "Icons", image: "https://dotorg.brightspotcdn.com/23/49/e3417fbd4645a06f239ce85d53f6/400x400-marcos-evangelista-de-morais.jpg", sellValue: 278, },
   { name: "Antony", rating: 89, version: "Fan Favourite", club: "Manchester United", image: "https://i.pinimg.com/736x/22/4a/b5/224ab5507633d1a4e835fc7532d64ba4.jpg", sellValue: 285 },
   { name: "Matz Sels", rating: 88, version: "Pre-Season Standouts", club: "Nottm Forest", image: "https://ichef.bbci.co.uk/ace/standard/820/cpsprodpb/7fe4/live/35c8e0d0-da2f-11ef-95b0-9ba717ab19ce.jpg", sellValue: 250 },
+  { name: "Paolo Maldini", rating: 93, version: "Icon", club: "Icons", image: "https://e0.365dm.com/16/04/1600x900/paolo-maldini-ac-milan-football_3447804.jpg?20160413082230", sellValue: 300, },
 
 
 
