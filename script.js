@@ -80,6 +80,7 @@ const packs = [
 
 // === Rarity Classes ===
 function getRarityClass(player) {
+  if (player.version === "GOAT") return "goat";
   if (player.version === "Fan Favourite") return "fan-favourite";
   if (player.version === "Icon") return "icon";
   if (player.version === "OTW") return "otw";
@@ -204,8 +205,8 @@ function showCollection() {
     // Add count badge
     const countBadge = document.createElement("div");
     countBadge.style.fontSize = "12px";
-    countBadge.style.color = "white";                   // Bright white text
-    countBadge.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Dark semi-transparent bg
+    countBadge.style.color = "white";
+    countBadge.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
     countBadge.style.padding = "3px 6px";
     countBadge.style.borderRadius = "4px";
     countBadge.style.display = "inline-block";
@@ -214,10 +215,10 @@ function showCollection() {
     countBadge.style.textAlign = "center";
     countBadge.style.boxShadow = "0 1px 2px rgba(0,0,0,0.3)";
     countBadge.style.width = "100%";
-    countBadge.style.transform = "scale(0.95)"; // Slight shrink to fit
+    countBadge.style.transform = "scale(0.95)";
 
-countBadge.textContent = `Owned: ${count}`;
-card.querySelector(".info").appendChild(countBadge);
+    countBadge.textContent = `Owned: ${count}`;
+    card.querySelector(".info").appendChild(countBadge);
 
     // Add buttons
     const buttonsDiv = document.createElement("div");
@@ -318,6 +319,71 @@ function runMultiColorConfetti(colors, count = 100) {
   }
 }
 
+// === Legendary GOAT Confetti ===
+function runGoatConfetti() {
+  const colors = ["#d4af37", "#FFD700", "#FFFFFF", "#f8e7a6", "#c5a000"];
+
+  for (let i = 0; i < 200; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.backgroundColor = color;
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.animationDuration = (Math.random() * 2 + 4) + "s";
+      confetti.style.opacity = Math.random() * 0.8 + 0.3;
+      confetti.style.width = (Math.random() * 6 + 6) + "px";
+      confetti.style.height = (Math.random() * 12 + 8) + "px";
+      confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+      confetti.style.boxShadow = "0 0 10px #ffd700";
+      document.body.appendChild(confetti);
+
+      setTimeout(() => {
+        confetti.remove();
+      }, 6000);
+    }, i * 15);
+  }
+
+  // Add star emojis
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      const star = document.createElement("div");
+      star.style.position = "fixed";
+      star.style.left = Math.random() * 100 + "vw";
+      star.style.top = "-20px";
+      star.style.fontSize = (Math.random() * 20 + 15) + "px";
+      star.style.color = "#ffd700";
+      star.style.pointerEvents = "none";
+      star.style.zIndex = "9999";
+      star.style.textShadow = "0 0 10px #fff";
+      star.textContent = "⭐";
+      document.body.appendChild(star);
+
+      const fallDuration = Math.random() * 3 + 2;
+      star.animate([
+        { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+        { transform: `translateY(100vh) rotate(360deg)`, opacity: 0 }
+      ], {
+        duration: fallDuration * 1000,
+        easing: "cubic-bezier(0.2, 0.8, 0.7, 1)"
+      });
+
+      setTimeout(() => star.remove(), fallDuration * 1000);
+    }, i * 100);
+  }
+
+  // Optional: Play epic sound (autoplays only if user has interacted)
+  try {
+    const audio = new Audio("https://www.myinstants.com/media/sounds/epic-win-sonido-epico-1.mp3");
+    audio.volume = 0.3;
+    audio.play().catch(() => {
+      console.log("Audio autoplay prevented – no user interaction yet.");
+    });
+  } catch (e) {
+    console.log("Audio failed to play:", e);
+  }
+}
+
 // === Pack Opening Overlay ===
 const overlay = document.createElement("div");
 overlay.id = "pack-opening-overlay";
@@ -336,6 +402,7 @@ function showPackOpeningAnimation(callback) {
   }, 1500);
 }
 
+// === Open Pack Logic ===
 // === Open Pack Logic ===
 function openPack(pack) {
   if (coins < pack.cost) return alert("Not enough coins!");
@@ -357,23 +424,82 @@ function openPack(pack) {
       }
     }
 
-    displayPackedPlayers(newPlayers);
+    // Check if any card is GOAT
+    const hasGoat = newPlayers.some(p => p.version === "GOAT");
 
-    // Confetti based on rarity
-    if (newPlayers.some(p => p.version === "Fan Favourite")) {
-      runMultiColorConfetti(["#8000ff", "#cc66ff", "#e0b3ff"], 150);
-    } else if (newPlayers.some(p => p.version === "Pre-Season Standouts")) {
-      runMultiColorConfetti(["#ff6b35", "#f7931e", "#fd5b71", "#c11a73"], 140);
-    } else if (newPlayers.some(p => p.version === "Icon")) {
-      runMultiColorConfetti(["#FFD700", "#FFFFFF"], 120);
-    } else if (newPlayers.some(p => p.version === "OTW")) {
-      runConfettiEffect("red", 120);
-    } else if (newPlayers.some(p => p.rating >= 86)) {
-      runConfettiEffect("yellow", 120);
-    } else if (newPlayers.some(p => p.rating >= 80)) {
-      runConfettiEffect("silver", 120);
+    if (hasGoat) {
+      // Step 1: Hide cards for now
+      const packArea = document.getElementById("pack-area");
+      packArea.innerHTML = "";
+
+      // Step 2: Show legendary popup
+      setTimeout(() => {
+        // Step 3: Run GOAT confetti
+        runGoatConfetti();
+
+        // Step 4: Show alert (triggers after confetti starts)
+        // Replace the alert line with:
+showGoatRevealPopup();
+
+function showGoatRevealPopup() {
+  const popup = document.createElement("div");
+  popup.style.position = "fixed";
+  popup.style.inset = "0";
+  popup.style.backgroundColor = "rgba(0,0,0,0.9)";
+  popup.style.display = "flex";
+  popup.style.flexDirection = "column";
+  popup.style.justifyContent = "center";
+  popup.style.alignItems = "center";
+  popup.style.zIndex = "10000";
+  popup.style.color = "white";
+  popup.style.fontSize = "3rem";
+  popup.style.textAlign = "center";
+  popup.style.fontFamily = "Arial, sans-serif";
+  popup.style.animation = "fade-in 0.8s";
+
+  popup.innerHTML = `
+    <div>
+      <div style="font-size: 4rem; margin-bottom: 20px;">🐐</div>
+      <div>THE GOAT HAS ARRIVED!</div>
+      <div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
+        Prepare for greatness...
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  // Auto-remove after 2.5 seconds and show card
+  setTimeout(() => {
+    popup.remove();
+  }, 2500);
+}
+
+        // Step 5: After alert is dismissed, reveal the card
+        setTimeout(() => {
+          displayPackedPlayers(newPlayers); // Now show the card(s)
+        }, 500);
+      }, 500);
     } else {
-      runConfettiEffect("gray", 120);
+      // Normal flow: just display cards and regular confetti
+      displayPackedPlayers(newPlayers);
+
+      // Regular confetti for other rarities
+      if (newPlayers.some(p => p.version === "Fan Favourite")) {
+        runMultiColorConfetti(["#8000ff", "#cc66ff", "#e0b3ff"], 150);
+      } else if (newPlayers.some(p => p.version === "Pre-Season Standouts")) {
+        runMultiColorConfetti(["#ff6b35", "#f7931e", "#fd5b71", "#c11a73"], 140);
+      } else if (newPlayers.some(p => p.version === "Icon")) {
+        runMultiColorConfetti(["#FFD700", "#FFFFFF"], 120);
+      } else if (newPlayers.some(p => p.version === "OTW")) {
+        runConfettiEffect("red", 120);
+      } else if (newPlayers.some(p => p.rating >= 86)) {
+        runConfettiEffect("yellow", 120);
+      } else if (newPlayers.some(p => p.rating >= 80)) {
+        runConfettiEffect("silver", 120);
+      } else {
+        runConfettiEffect("gray", 120);
+      }
     }
   });
 }
@@ -459,7 +585,6 @@ function populateDropdownOptions(select) {
   defaultOption.selected = true;
   select.appendChild(defaultOption);
 
-  // Deduplicate by visual identity
   const uniquePlayers = [...new Map(
     collection.map(p => [
       `${p.name}-${p.rating}-${p.version}-${p.club}-${p.image}`,
