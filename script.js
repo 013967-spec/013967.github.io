@@ -54,7 +54,7 @@ const packs = [
   },
   {
     name: "83+ x3 Players Pack",
-    cost: 15000,
+    cost: 20000,
     count: 3,
     filter: player => player.rating >= 83
   },
