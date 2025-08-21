@@ -28,6 +28,8 @@ function resetProgress() {
     localStorage.removeItem("fc26Collection");
     localStorage.removeItem("fc26Team");
 
+    saveToStorage(); // ✅ Save the reset state
+
     updateCoinsDisplay();
     document.getElementById("pack-area").innerHTML = "";
     showCollection();
@@ -74,7 +76,7 @@ const packs = [
     name: "Promo Pack",
     cost: 8000,
     count: 1,
-    filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite",].includes(player.version)
+    filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite"].includes(player.version)
   },
   {
     name: "85+ x10 Players Pack",
@@ -125,13 +127,12 @@ function createCardElement(player, showButtons = true) {
     const sendBtn = document.createElement("button");
     sendBtn.textContent = "Send to Collection";
     sendBtn.onclick = () => {
-      // Ensure this card has a unique ID
       const playerWithId = {
         ...player,
         __id: player.__id || Date.now() + Math.random() * 10000
       };
       collection.push(playerWithId);
-      saveToStorage();
+      saveToStorage(); // ✅ Save after adding
       card.remove();
       if (document.getElementById("collection-screen").style.display !== "none") {
         showCollection();
@@ -143,11 +144,12 @@ function createCardElement(player, showButtons = true) {
     sellBtn.onclick = () => {
       coins += player.sellValue;
       updateCoinsDisplay();
+      saveToStorage(); // ✅ Save after modifying coins
 
       const index = collection.findIndex(p => p.__id === player.__id);
       if (index !== -1) {
         collection.splice(index, 1);
-        saveToStorage();
+        saveToStorage(); // ✅ Save after removing
         if (document.getElementById("collection-screen").style.display !== "none") {
           showCollection();
         }
@@ -175,7 +177,6 @@ function displayPackedPlayers(players) {
   packArea.innerHTML = "";
 
   players.forEach(player => {
-    // Assign a unique ID to each pulled card
     const playerWithId = {
       ...player,
       __id: Date.now() + Math.random() * 10000
@@ -190,7 +191,6 @@ function showCollection() {
   const collectionArea = document.getElementById("collection-area");
   collectionArea.innerHTML = "";
 
-  // Group by visual identity (excluding __id)
   const playerMap = new Map();
   collection.forEach(player => {
     const key = `${player.name}-${player.rating}-${player.version}-${player.club}-${player.image}`;
@@ -200,7 +200,6 @@ function showCollection() {
     playerMap.get(key).count++;
   });
 
-  // Sort by rating (highest first)
   const sortedEntries = [...playerMap.entries()].sort((a, b) => {
     return b[1].player.rating - a[1].player.rating;
   });
@@ -208,7 +207,6 @@ function showCollection() {
   sortedEntries.forEach(([key, { player, count }]) => {
     const card = createCardElement(player, false);
 
-    // Add count badge
     const countBadge = document.createElement("div");
     countBadge.style.fontSize = "12px";
     countBadge.style.color = "white";
@@ -222,11 +220,9 @@ function showCollection() {
     countBadge.style.boxShadow = "0 1px 2px rgba(0,0,0,0.3)";
     countBadge.style.width = "100%";
     countBadge.style.transform = "scale(0.95)";
-
     countBadge.textContent = `Owned: ${count}`;
     card.querySelector(".info").appendChild(countBadge);
 
-    // Add buttons
     const buttonsDiv = document.createElement("div");
     buttonsDiv.className = "card-buttons";
 
@@ -235,6 +231,7 @@ function showCollection() {
     sellOneBtn.onclick = () => {
       coins += player.sellValue;
       updateCoinsDisplay();
+      saveToStorage(); // ✅ Save
 
       const index = collection.findIndex(p => p.__id === player.__id);
       if (index !== -1) {
@@ -251,8 +248,8 @@ function showCollection() {
       const totalValue = player.sellValue * count;
       coins += totalValue;
       updateCoinsDisplay();
+      saveToStorage(); // ✅ Save
 
-      // Remove all visually identical cards
       const matchKey = `${player.name}-${player.rating}-${player.version}-${player.club}-${player.image}`;
       for (let i = collection.length - 1; i >= 0; i--) {
         const p = collection[i];
@@ -328,7 +325,6 @@ function runMultiColorConfetti(colors, count = 100) {
 // === Legendary GOAT Confetti ===
 function runGoatConfetti() {
   const colors = ["#d4af37", "#FFD700", "#FFFFFF", "#f8e7a6", "#c5a000"];
-
   for (let i = 0; i < 200; i++) {
     setTimeout(() => {
       const confetti = document.createElement("div");
@@ -350,7 +346,6 @@ function runGoatConfetti() {
     }, i * 15);
   }
 
-  // Add star emojis
   for (let i = 0; i < 40; i++) {
     setTimeout(() => {
       const star = document.createElement("div");
@@ -378,7 +373,6 @@ function runGoatConfetti() {
     }, i * 100);
   }
 
-  // Optional: Play epic sound (autoplays only if user has interacted)
   try {
     const audio = new Audio("https://www.myinstants.com/media/sounds/epic-win-sonido-epico-1.mp3");
     audio.volume = 0.3;
@@ -393,11 +387,7 @@ function runGoatConfetti() {
 // === Pack Opening Overlay ===
 const overlay = document.createElement("div");
 overlay.id = "pack-opening-overlay";
-overlay.innerHTML = `
-  <div class="overlay-content">
-    <div class="shimmer-text">Opening Pack...</div>
-  </div>
-`;
+overlay.innerHTML = `<div class="overlay-content"><div class="shimmer-text">Opening Pack...</div></div>`;
 document.body.appendChild(overlay);
 
 function showPackOpeningAnimation(callback) {
@@ -408,45 +398,7 @@ function showPackOpeningAnimation(callback) {
   }, 1500);
 }
 
-// === Open Pack Logic ===
-// === Open Pack Logic ===
-function openPack(pack) {
-  if (coins < pack.cost) return alert("Not enough coins!");
-  coins -= pack.cost;
-  updateCoinsDisplay();
-
-  showPackOpeningAnimation(() => {
-    let newPlayers = [];
-
-    if (pack.custom === "lowRated10") {
-      for (let i = 0; i < 10; i++) {
-        newPlayers.push(getRandomPlayerForLowRatedPack());
-      }
-    } else {
-      const eligible = playerPool.filter(pack.filter);
-      for (let i = 0; i < pack.count; i++) {
-        const randomIndex = Math.floor(Math.random() * eligible.length);
-        newPlayers.push(eligible[randomIndex]);
-      }
-    }
-
-    // Check if any card is GOAT
-    const hasGoat = newPlayers.some(p => p.version === "GOAT");
-
-    if (hasGoat) {
-      // Step 1: Hide cards for now
-      const packArea = document.getElementById("pack-area");
-      packArea.innerHTML = "";
-
-      // Step 2: Show legendary popup
-      setTimeout(() => {
-        // Step 3: Run GOAT confetti
-        runGoatConfetti();
-
-        // Step 4: Show alert (triggers after confetti starts)
-        // Replace the alert line with:
-showGoatRevealPopup();
-
+// === GOAT Reveal Popup ===
 function showGoatRevealPopup() {
   const popup = document.createElement("div");
   popup.style.position = "fixed";
@@ -461,7 +413,6 @@ function showGoatRevealPopup() {
   popup.style.fontSize = "3rem";
   popup.style.textAlign = "center";
   popup.style.fontFamily = "Arial, sans-serif";
-  popup.style.animation = "fade-in 0.8s";
 
   popup.innerHTML = `
     <div>
@@ -472,25 +423,79 @@ function showGoatRevealPopup() {
       </div>
     </div>
   `;
-
   document.body.appendChild(popup);
 
-  // Auto-remove after 2.5 seconds and show card
   setTimeout(() => {
     popup.remove();
   }, 2500);
 }
 
-        // Step 5: After alert is dismissed, reveal the card
-        setTimeout(() => {
-          displayPackedPlayers(newPlayers); // Now show the card(s)
-        }, 500);
-      }, 500);
-    } else {
-      // Normal flow: just display cards and regular confetti
-      displayPackedPlayers(newPlayers);
+// === Open Pack Logic (with rare GOAT chance & proper saving) ===
+function openPack(pack) {
+  if (coins < pack.cost) return alert("Not enough coins!");
+  coins -= pack.cost;
+  updateCoinsDisplay();
+  saveToStorage(); // ✅ Save after spending coins
 
-      // Regular confetti for other rarities
+  showPackOpeningAnimation(() => {
+    let newPlayers = [];
+
+    // === 🐐 BLOCKED PACKS: No GOAT chance ===
+    const blockedPacks = [
+      "Low Rated 10-Player Pack",
+      "83+ x3 Players Pack",
+      "Guaranteed Icon Pack"
+    ];
+
+    // === 🔮 0.01% chance for GOAT in allowed packs ===
+    if (!blockedPacks.includes(pack.name)) {
+      if (Math.random() <= 0.0001) { // 0.01%
+        const goats = playerPool.filter(p => p.version === "GOAT");
+        if (goats.length > 0) {
+          const goat = goats[Math.floor(Math.random() * goats.length)];
+          displayPackedPlayers([goat]);
+
+          setTimeout(() => {
+            runGoatConfetti();
+            showGoatRevealPopup();
+          }, 500);
+
+          return;
+        }
+      }
+    }
+
+    // === Normal pack logic (exclude GOATs from normal pulls) ===
+    if (pack.custom === "lowRated10") {
+      for (let i = 0; i < 10; i++) {
+        newPlayers.push(getRandomPlayerForLowRatedPack());
+      }
+    } else {
+      const eligible = playerPool.filter(p => pack.filter(p) && p.version !== "GOAT");
+      if (eligible.length === 0) {
+        alert("No players match this pack's criteria!");
+        coins += pack.cost;
+        updateCoinsDisplay();
+        saveToStorage();
+        return;
+      }
+      for (let i = 0; i < pack.count; i++) {
+        const randomIndex = Math.floor(Math.random() * eligible.length);
+        newPlayers.push(eligible[randomIndex]);
+      }
+    }
+
+    const hasGoat = newPlayers.some(p => p.version === "GOAT");
+    if (hasGoat) {
+      setTimeout(() => {
+        runGoatConfetti();
+        showGoatRevealPopup();
+      }, 500);
+    }
+
+    displayPackedPlayers(newPlayers);
+
+    if (!hasGoat) {
       if (newPlayers.some(p => p.version === "Fan Favourite")) {
         runMultiColorConfetti(["#8000ff", "#cc66ff", "#e0b3ff"], 150);
       } else if (newPlayers.some(p => p.version === "Pre-Season Standouts")) {
@@ -507,6 +512,8 @@ function showGoatRevealPopup() {
         runConfettiEffect("gray", 120);
       }
     }
+
+    // Save pulled players to collection? No — they're shown to send manually
   });
 }
 
@@ -647,7 +654,7 @@ function saveTeam() {
     }
   });
 
-  saveToStorage();
+  saveToStorage(); // ✅ Save team
 
   const totalValue = yourTeam.reduce((sum, player) => sum + (player.sellValue || 0), 0);
   const totalRating = yourTeam.reduce((sum, player) => sum + player.rating, 0);
