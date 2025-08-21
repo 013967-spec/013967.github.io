@@ -1,5 +1,5 @@
 // === Load saved data from localStorage or initialize defaults ===
-let coins = parseInt(localStorage.getItem("fc26Coins")) || 1500;
+let coins = parseInt(localStorage.getItem("fc26Coins")) || 100000;
 let collection = JSON.parse(localStorage.getItem("fc26Collection")) || [];
 let yourTeam = JSON.parse(localStorage.getItem("fc26Team")) || [];
 
@@ -20,7 +20,7 @@ function saveToStorage() {
 function resetProgress() {
   const confirmed = confirm("Are you sure you want to reset ALL your progress? This cannot be undone.");
   if (confirmed) {
-    coins = 1500;
+    coins = 100000;
     collection = [];
     yourTeam = [];
 
@@ -48,34 +48,40 @@ function updateCoinsDisplay() {
 const packs = [
   {
     name: "86+ Player Pack",
-    cost: 150,
+    cost: 7500,
     count: 1,
     filter: player => player.rating >= 86
   },
   {
     name: "83+ x3 Players Pack",
-    cost: 500,
+    cost: 15000,
     count: 3,
     filter: player => player.rating >= 83
   },
   {
     name: "Low Rated 10-Player Pack",
-    cost: 600,
+    cost: 30000,
     count: 10,
     custom: "lowRated10"
   },
   {
     name: "Guaranteed Icon Pack",
-    cost: 700,
+    cost: 12000,
     count: 1,
     filter: player => player.version === "Icon"
   },
   {
     name: "Promo Pack",
-    cost: 1500,
+    cost: 8000,
     count: 1,
-    filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite"].includes(player.version)
-  }
+    filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite",].includes(player.version)
+  },
+  {
+    name: "85+ x10 Players Pack",
+    cost: 70000,
+    count: 10,
+    filter: player => player.rating >= 85
+  },
 ];
 
 // === Rarity Classes ===
