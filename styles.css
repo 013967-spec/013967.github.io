@@ -328,6 +328,118 @@ nav button:hover {
   50% { transform: scale(1.08) translateY(-10px); }
 }
 
+/* === First XI Card - Electropop Neon Synthwave Style === */
+.player-card.first-xi {
+  background: linear-gradient(135deg,
+    #5200FF 10%,
+    #F900FF 30%,
+    #FF6B00 60%,
+    #CCFF00 90%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #CCFF00;
+  box-shadow:
+    0 0 10px #5200FF,
+    0 0 20px rgba(249, 0, 255, 0.6),
+    0 0 30px rgba(255, 107, 0, 0.6),
+    0 0 40px rgba(204, 255, 0, 0.4);
+  animation: first-xi-glow 2.5s ease-in-out infinite alternate,
+             neon-pulse 1.5s ease-in-out infinite,
+             pop-in 0.6s ease;
+  text-shadow: 0 0 5px #fff;
+}
+
+/* Animated Criss-Cross Neon Grid Overlay */
+.player-card.first-xi::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(204, 255, 0, 0.15) 20px,
+      rgba(204, 255, 0, 0.25) 40px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 30px,
+      rgba(249, 0, 255, 0.15) 30px,
+      rgba(249, 0, 255, 0.25) 60px
+    );
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+  animation: neon-grid-scan 10s linear infinite;
+  transform: rotate(10deg);
+}
+
+/* Subtle Noise Texture for Analog Feel */
+.player-card.first-xi::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.15 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* === Animations === */
+
+/* Pulsing Glow Effect */
+@keyframes first-xi-glow {
+  0% {
+    box-shadow:
+      0 0 10px #5200FF,
+      0 0 20px rgba(249, 0, 255, 0.4),
+      0 0 30px rgba(255, 107, 0, 0.4);
+  }
+  100% {
+    box-shadow:
+      0 0 20px #5200FF,
+      0 0 30px rgba(249, 0, 255, 0.8),
+      0 0 40px rgba(255, 107, 0, 0.8),
+      0 0 50px rgba(204, 255, 0, 0.6);
+  }
+}
+
+/* Subtle Color Pulse */
+@keyframes neon-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.1) hue-rotate(5deg); }
+}
+
+/* Scanning Grid Animation */
+@keyframes neon-grid-scan {
+  0% {
+    transform: rotate(10deg) translateX(0) translateY(0);
+  }
+  100% {
+    transform: rotate(10deg) translateX(30px) translateY(30px);
+  }
+}
+
+/* Add slight float for prestige */
+.player-card.first-xi {
+  animation: first-xi-glow 2.5s ease-in-out infinite alternate,
+             neon-pulse 1.5s ease-in-out infinite,
+             pop-in 0.6s ease,
+             float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
 /* === Player Image === */
 .player-img-wrapper {
   width: 100%;
