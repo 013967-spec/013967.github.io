@@ -68,7 +68,7 @@ const packs = [
   },
   {
     name: "Guaranteed Icon Pack",
-    cost: 12000,
+    cost: 13500,
     count: 1,
     filter: player => player.version === "Icon"
   },
@@ -76,7 +76,7 @@ const packs = [
     name: "Promo Pack",
     cost: 8000,
     count: 1,
-    filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite"].includes(player.version)
+    filter: player => ["Pre-Season Standouts", "OTW", "Fan Favourite", "First XI"].includes(player.version)
   },
   {
     name: "85+ x10 Players Pack",
@@ -89,6 +89,7 @@ const packs = [
 // === Rarity Classes ===
 function getRarityClass(player) {
   if (player.version === "GOAT") return "goat";
+  if (player.version === "First XI") return "first-xi"; // ← New!
   if (player.version === "Fan Favourite") return "fan-favourite";
   if (player.version === "Icon") return "icon";
   if (player.version === "OTW") return "otw";
@@ -504,6 +505,8 @@ function openPack(pack) {
         runMultiColorConfetti(["#FFD700", "#FFFFFF"], 120);
       } else if (newPlayers.some(p => p.version === "OTW")) {
         runConfettiEffect("red", 120);
+        } else if (newPlayers.some(p => p.version === "First XI")) {
+  runMultiColorConfetti(["#CCFF00", "#FF6B00", "#F900FF", "#5200FF"], 160);
       } else if (newPlayers.some(p => p.rating >= 86)) {
         runConfettiEffect("yellow", 120);
       } else if (newPlayers.some(p => p.rating >= 80)) {
