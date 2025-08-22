@@ -196,6 +196,16 @@ const playerPool = [
   { name: "Ángel Di María", rating: 81, version: "Base", club: "Rosario Central", image: "https://www.reuters.com/resizer/v2/KGEN2WZPEFMRHIQOSWAQIYRVAM.jpg?auth=90ac6736adea3c45e8bc19732b0989133b0cf0bd015958c8344217c75a5c8d23&width=1080&quality=80", sellValue: 3280 },
   { name: "Leon Bailey", rating: 81, version: "Base", club: "Aston Villa", image: "https://www.sportsmole.co.uk/thumbor/fb96GK0ES1Cw2FyVkzfG4koQGdY=/640x480/smart/filters:format(webp)/https%3A%2F%2Fsportsmole-media-prod.s3.gra.io.cloud.ovh.net%2F25%2F05%2Fleon-bailey.jpg", sellValue: 3280 },
   { name: "Roberto Carlos", rating: 90, version: "Icon", club: "Icons", image: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSSm8EuDPFUiCxcvdPXiIcNQLShPtS_PRu7aLrKj1i1x4tp_Hz7RRjCzt1UF1bUFNsu-MbxMBYAbnZKCviyauj0lg", sellValue: 13500, }, 
-
+  { name: "Allison", rating: 94, version: "First XI", club: "Liverpool", image: "https://images.ladbible.com/resize?type=webp&quality=70&width=3840&fit=contain&gravity=auto&url=https://images.ladbiblegroup.com/v3/assets/blta90d05ad41a54a71/blt498cc1fcd83354ad/68888aadafb30a6c9ebe71f2/GettyImages-2227474112.jpg", sellValue: 15000, }, 
+  { name: "Nuno Mendes", rating: 94, version: "First XI", club: "PSG", image: "https://s1.dmcdn.net/v/Wz03I1csBRSU77G6b/x1080222", sellValue: 15000, }, 
+  { name: "Achraf Hakimi", rating: 94, version: "First XI", club: "PSG", image: "https://assets-us-01.kc-usercontent.com/31dbcbc6-da4c-0033-328a-d7621d0fa726/0475db0d-fc12-407b-b3ea-227ff48ff64c/Juli%20%2837%29.png?ver=03-06-2025?w=3840&q=75", sellValue: 15000, }, 
+  { name: "Virgil Van Dijk", rating: 94, version: "First XI", club: "Liverpool", image: "https://sportsview.co.uk/wp-content/uploads/2025/03/liverpool-v-newcastle-united-carabao-cup-final-1-scaled.jpg", sellValue: 15000, }, 
+  { name: "Alessandro Bastoni", rating: 94, version: "First XI", club: "Inter Milan", image: "https://tmssl.akamaized.net//images/foto/galerie/alessandro-bastoni-inter-2024-25-1727024381-148800.jpg?lm=1727024398", sellValue: 15000, }, 
+  { name: "Vitinha", rating: 94, version: "First XI", club: "PSG", image: "https://icdn.psgtalk.com/wp-content/uploads/2023/11/vitinha-psg-v-montpellier-ligue-1-2023.jpg", sellValue: 15000, }, 
+  { name: "Pedri", rating: 94, version: "First XI", club: "Barcelona", image: "https://learning.coachesvoice.com/wp-content/webpc-passthru.php?src=https://learning.coachesvoice.com/wp-content/uploads/2021/10/Pedri-Main.jpg&nocache=1", sellValue: 15000, }, 
+  { name: "Jude Bellingham", rating: 94, version: "First XI", club: "Real Madrid", image: "https://www.planetsport.com/image-library/land/1200/498440_jude-bellingham-real-madrid-28-october-2023.webp", sellValue: 15000, }, 
+  { name: "Lamine Yamal", rating: 94, version: "First XI", club: "Barcelona", image: "https://img.olympics.com/images/image/private/t_s_pog_staticContent_hero_md_2x/f_auto/primary/gaa3k1wtk9dv1rhzjkcg", sellValue: 15000, }, 
+  { name: "Ousmane Dembele", rating: 94, version: "First XI", club: "PSG", image: "https://bloximages.newyork1.vip.townnews.com/thepress.net/content/tncms/assets/v3/editorial/c/fd/cfd77c72-0b85-538a-84e6-f0eafb726975/678540d58df33.image.png?resize=1200%2C675", sellValue: 15000, }, 
+  { name: "Kylian Mbappe", rating: 94, version: "First XI", club: "Real Madrid", image: "https://ichef.bbci.co.uk/ace/standard/2560/cpsprodpb/318b/live/7f095900-4f37-11f0-99c3-e7388a7b1bed.jpg", sellValue: 15000, }, 
 ];
 
